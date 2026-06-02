@@ -166,7 +166,10 @@ public class StreamApiTasks {
 
     static DoubleSummaryStatistics activeOrderStatistics(List<Order> orders) {
         // TODO: zadanie dodatkowe
-        return new DoubleSummaryStatistics();
+        return orders.stream()
+                .filter(order -> order.status != OrderStatus.CANCELLED)
+                .mapToDouble(order -> order.totalValue())
+                .summaryStatistics();
     }
 
     public static void main(String[] args) {
