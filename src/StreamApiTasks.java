@@ -116,7 +116,10 @@ public class StreamApiTasks {
 
     static OptionalDouble averageDeliveredOrderValue(List<Order> orders) {
         // TODO: zadanie 6
-        return OptionalDouble.empty();
+        return orders.stream()
+                .filter(order -> order.status == OrderStatus.DELIVERED)
+                .mapToDouble(order -> order.totalValue())
+                .average();
     }
 
     static Map<OrderStatus, Long> countByStatus(List<Order> orders) {
