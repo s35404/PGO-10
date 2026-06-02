@@ -139,12 +139,21 @@ public class StreamApiTasks {
 
     static Map<String, Double> topCustomers(List<Order> orders, int limit) {
         // TODO: zadanie 9
-        return Map.of();
+        return orders.stream()
+                .filter(order -> order.status != OrderStatus.CANCELLED)
+                .collect(Collectors.groupingBy(order -> order.customerName, Collectors.summingDouble(order -> order.totalValue())))
+                .entrySet().stream()
+                .sorted(Map.Entry.<String, Double>comparingByValue().reversed())
+                .limit(limit)
+                .collect(Collectors.toMap(Map.Entry::getKey,Map.Entry::getValue,(a,b)-> a,LinkedHashMap::new));
     }
 
-    static Map<Boolean, List<Order>> partitionActiveOrdersByValue(List<Order> orders, double threshold) {
+    static Map<Boolean, Long> partitionActiveOrdersByValue(List<Order> orders, double threshold) {
         // TODO: zadanie 10
-        return Map.of();
+        return orders.stream()
+                .filter(order -> order.status != OrderStatus.CANCELLED)
+                .collect(Collectors.partitioningBy(order -> order.totalValue() >= threshold, Collectors.counting()
+                ));
     }
 
     static Optional<Order> mostExpensiveDeliveredOrder(List<Order> orders) {
